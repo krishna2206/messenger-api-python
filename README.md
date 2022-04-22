@@ -1,4 +1,6 @@
 # messenger-api-python
+[![PyPI](https://img.shields.io/pypi/v/messenger-api-python.svg?maxAge=2592000)](https://pypi.python.org/pypi/messenger-api-python)
+
 Python Wrapper to various APIs from [Facebook Messenger Platform](https://developers.facebook.com/docs/messenger-platform).
 
 

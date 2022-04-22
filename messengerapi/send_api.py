@@ -284,23 +284,13 @@ class SendApi():
 
 	def __send_local_attachment(self , asset_type , file_location , recipient_id , is_reusable="true"):
 
-		#! BUG
-		# THERE IS A BUG THAT MAGIC RETURNS WRONG MIMETYPE IF THE FILE IS AN MP3 FILE
-		# ALSO THE API RETURNS AN ERROR IF YOU SEND AN MP3 FILE (AUDIO/MPEG) AS A LOCAL/ATTACHMENT FILE
-		# if (os.path.basename(file_location).endswith(".mp3") or
-		# 	magic.Magic(mime=True).from_file(file_location).startswith("audio/mpeg")):
-		# 	mimetype = "application/octet-stream"
-		# ZIP files must be renamed to have an .pdf extension otherwise this will fail to send
-		# elif (os.path.basename(file_location).endswith(".zip") or
-		# 	magic.Magic(mime=True).from_file(file_location).startswith("application/zip")):
-		# 	mimetype = "application/octet-stream"
-		# else:
-		# 	mimetype = magic.Magic(mime=True).from_file(file_location)
-
-		if os.path.basename(file_location).endswith(".pdf"):
-			mimetype = "application/octet-stream"
-		else:
-			mimetype = magic.Magic(mime=True).from_file(file_location)
+		extensions = (".mp3", ".pdf")
+		for extension in extensions:
+			if file_location.endswith(extension):
+				mimetype = "application/octet-stream"
+				break
+			elif extension == extensions[-1]:
+				mimetype = magic.Magic(mime=True).from_file(file_location)
 
 		print(mimetype)
 
