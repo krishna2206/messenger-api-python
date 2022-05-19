@@ -7,6 +7,8 @@ class ProfileApi:
 		self.__graph_version = "13.0"
 		self.__api_url = f"https://graph.facebook.com/v{self.__graph_version}/me"
 		self.__page_access_token = page_access_token
+		self.__global_level_endpoint = "/messenger_profile"
+		self.__user_level_endpoint = "/custom_user_settings"
 
 	def get_api_url(self):
 		return self.__api_url
@@ -43,7 +45,10 @@ class ProfileApi:
 			"greeting" : greetings
 		}
 
-		return requests.post(self.get_api_url() , params={"access_token":self.get_access_token()} , json=request_body).json()
+		return requests.post(
+			self.get_api_url() + self.__global_level_endpoint,
+			params={"access_token":self.get_access_token()} ,
+			json=request_body).json()
 
 	def set_user_persistent_menu(self, user_id, persistent_menu):
 		"""Set the persistent menu for any user of the page.
@@ -52,16 +57,14 @@ class ProfileApi:
 			user_id (str) : The user id.
 			persistent_menu (PersistentMenu object) : The content of the PersistentMenu object , obtained via the PersistentMenu().get_content() method.
 		"""
-		user_level_endpoint = "/custom_user_settings"
 
 		return requests.post(
-			self.get_api_url() + user_level_endpoint,
+			self.get_api_url() + self.__user_level_endpoint,
 			params={"access_token":self.get_access_token()},
 			json={
 				"psid": user_id,
 				"persistent_menu": persistent_menu
-			}
-		).json()
+			}).json()
 
 	def set_persistent_menu(self, persistent_menu):
 		"""Set the persistent menu for the page.
@@ -69,12 +72,8 @@ class ProfileApi:
 		Args:
 			persistent_menu (PersistentMenu object) : The content of the PersistentMenu object , obtained via the PersistentMenu().get_content() method.
 		"""
-		global_level_endpoint = "/messenger_profile"
 
 		return requests.post(
-			self.get_api_url() + global_level_endpoint,
+			self.get_api_url() + self.__global_level_endpoint,
 			params={"access_token": self.get_access_token()},
-			json={
-				"persistent_menu": persistent_menu
-			}
-		).json()
+			json={"persistent_menu": persistent_menu}).json()

@@ -49,17 +49,8 @@ Various components used when sending messages in Facebook Messenger are wrapped 
 - You'll need to setup a [Facebook App](https://developers.facebook.com/apps/), Facebook Page, get the Page Access Token and link the App to the Page.
 ## How to install
 ### From GitHub
-- Clone this repository :
 ```bash
-git clone https://github.com/krishna2206/messenger-api-python.git
-```
-- Navigate to the cloned repository folder and build the package :
-```bash
-python -m build
-```
-- Navigate to *dist* folder and install the package, <package_name> may vary so I don't explicitly provide the name here :
-```bash
-pip install <package_name>.whl
+pip install git+https://github.com/krishna2206/messenger-api-python.git#egg=messenger-api-python
 ```
 ### From Pypi
 Package from Pypi.org may not be the latest one, if you want the latest version of this package, install it from the GitHub repository (see above)
@@ -76,8 +67,6 @@ send_api.send_text_message(<message>, <recipient_id>)
 **Note**: From Facebook regarding User IDs
 
 > These ids are page-scoped. These ids differ from those returned from Facebook Login apps which are app-scoped. You must use ids retrieved from a Messenger integration for this page in order to function properly.
-
-> If `app_secret` is initialized, an app_secret_proof will be generated and send with every request. Appsecret Proofs helps further secure your client access tokens. You can find out more on the [Facebook Docs](https://developers.facebook.com/docs/graph-api/securing-requests#appsecret_proof)
 
 ##### Sending a generic template message:
 
@@ -130,4 +119,3 @@ send_api.send_local_file(<file_location> , <recipient_id>)
 ```
 ## To do
 - Securing requests
-- Unit tests
