@@ -1,4 +1,4 @@
-"""Wrapper for the Send API , version 12.0"""
+"""Wrapper for the Send API , version 13.0"""
 
 import os
 
@@ -6,9 +6,9 @@ import requests
 from requests_toolbelt import MultipartEncoder
 import magic
 
-class SendApi():
+class SendApi:
 	def __init__(self , page_access_token):
-		self.__graph_version = "12.0"
+		self.__graph_version = "13.0"
 		self.__api_url = f"https://graph.facebook.com/v{self.__graph_version}/me/messages"
 		self.__page_access_token = page_access_token
 

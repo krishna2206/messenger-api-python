@@ -3,7 +3,7 @@
 POSTBACK = "postback"
 WEB_URL = "web_url"
 
-class Elements():
+class Elements:
 	"""A list of Element objects.
 
 	Attributes:
@@ -24,7 +24,7 @@ class Elements():
 	def get_content(self):
 		return self.__elements
 
-class Element():
+class Element:
 	def __init__(self , title="An element of a generic message." , subtitle=None , image_url=None , buttons=None):
 		"""Represent one element (block , card) of a generic message
 
@@ -89,7 +89,7 @@ class Element():
 		}
 
 
-class Buttons():
+class Buttons:
 	"""A list of Button objects.
 
 	Attributes:
@@ -111,7 +111,7 @@ class Buttons():
 		return self.__buttons
 
 
-class Button():
+class Button:
 	def __init__(self , button_type=POSTBACK , title="Button"):
 		"""Represent a button , used for generic message , persistent menu , ...
 
@@ -173,7 +173,7 @@ class Button():
 			"url" : self.__url
 		}
 
-class QuickReplies():
+class QuickReplies:
 	"""A list of QuickReply objects.
 
 	Attributes:
@@ -194,7 +194,7 @@ class QuickReplies():
 	def get_content(self):
 		return self.__quick_replies
 
-class QuickReply():
+class QuickReply:
 	def __init__(self , title="Quick reply" , payload="<DEVELOPER_DEFINED_PAYLOAD>" , image_url=None):
 		"""Represent a quick reply , used for a quick reply message.
 
@@ -264,7 +264,7 @@ class QuickReply():
 
 
 
-class PersistentMenu():
+class PersistentMenu:
 	def __init__(self , default_locale_menu):
 		"""Represents a persistent menu.
 
@@ -302,6 +302,4 @@ class PersistentMenu():
 		})
 
 	def get_content(self):
-		return {
-			"persistent_menu" : self.__persistent_menus
-		}
+		return self.__persistent_menus

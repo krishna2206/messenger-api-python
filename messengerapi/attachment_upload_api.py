@@ -1,4 +1,4 @@
-"""Wrapper for the Attachment Upload API , version 12.0"""
+"""Wrapper for the Attachment Upload API , version 13.0"""
 
 import os
 
@@ -6,9 +6,9 @@ import requests
 from requests_toolbelt import MultipartEncoder
 import magic
 
-class AttachmentUploadApi():
+class AttachmentUploadApi:
 	def __init__(self, page_access_token:str) -> None:
-		self.__graph_version = "12.0"
+		self.__graph_version = "13.0"
 		self.__api_url = f"https://graph.facebook.com/v{self.__graph_version}/me/message_attachments"
 		self.__page_access_token = page_access_token
 

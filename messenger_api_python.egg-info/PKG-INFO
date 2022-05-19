@@ -1,3 +1,18 @@
+Metadata-Version: 2.1
+Name: messenger-api-python
+Version: 2022.5.19
+Summary: Python wrapper to the various APIs in Facebook Messenger Platform
+Home-page: https://github.com/krishna2206/messenger-api-python
+Author: krishna2206
+Author-email: fitiavana.krishna@gmail.com
+License: MIT License
+Classifier: Programming Language :: Python :: 3.7
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # messenger-api-python
 [![PyPI](https://img.shields.io/pypi/v/messenger-api-python.svg?maxAge=2592000)](https://pypi.python.org/pypi/messenger-api-python)
 
@@ -34,8 +49,17 @@ Various components used when sending messages in Facebook Messenger are wrapped 
 - You'll need to setup a [Facebook App](https://developers.facebook.com/apps/), Facebook Page, get the Page Access Token and link the App to the Page.
 ## How to install
 ### From GitHub
+- Clone this repository :
 ```bash
-pip install git+https://github.com/krishna2206/messenger-api-python.git#egg=messenger-api-python
+git clone https://github.com/krishna2206/messenger-api-python.git
+```
+- Navigate to the cloned repository folder and build the package :
+```bash
+python -m build
+```
+- Navigate to *dist* folder and install the package, <package_name> may vary so I don't explicitly provide the name here :
+```bash
+pip install <package_name>.whl
 ```
 ### From Pypi
 Package from Pypi.org may not be the latest one, if you want the latest version of this package, install it from the GitHub repository (see above)
@@ -106,3 +130,4 @@ send_api.send_local_file(<file_location> , <recipient_id>)
 ```
 ## To do
 - Securing requests
+- Unit tests

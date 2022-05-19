@@ -1,0 +1,14 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+messenger_api_python.egg-info/PKG-INFO
+messenger_api_python.egg-info/SOURCES.txt
+messenger_api_python.egg-info/dependency_links.txt
+messenger_api_python.egg-info/requires.txt
+messenger_api_python.egg-info/top_level.txt
+messengerapi/__init__.py
+messengerapi/attachment_upload_api.py
+messengerapi/components.py
+messengerapi/messenger_profile_api.py
+messengerapi/send_api.py

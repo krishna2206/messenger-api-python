@@ -1,11 +1,11 @@
-"""Wrapper for the Profile API , version 12.0"""
+"""Wrapper for the Profile API , version 13.0"""
 
 import requests
 
-class ProfileApi():
+class ProfileApi:
 	def __init__(self , page_access_token):
-		self.__graph_version = "12.0"
-		self.__api_url = f"https://graph.facebook.com/v{self.__graph_version}/me/messenger_profile"
+		self.__graph_version = "13.0"
+		self.__api_url = f"https://graph.facebook.com/v{self.__graph_version}/me"
 		self.__page_access_token = page_access_token
 
 	def get_api_url(self):
@@ -17,7 +17,7 @@ class ProfileApi():
 	def get_graph_version(self):
 		return self.__graph_version
 
-	def set_welcome_screen(self , get_started_button_payload , greetings=[{"locale":"default","text":"Welcome , {{user_full_name}} !"}]):
+	def set_welcome_screen(self , get_started_button_payload , greetings=None):
 		"""
 		Set the welcome screen of the page. #! <INSERT_DOC_URL>
 		A welcome screen is the first screen a person sees when he clicks on the "Send message" button in the page.
@@ -28,7 +28,11 @@ class ProfileApi():
 				Supports multiples locales by specifying the local and the corresponding message.
 				Defaults to [{"locale":"default","text":"Welcome , {{user_full_name}} !"}]
 		"""
-		assert isinstance(greetings , list) and isinstance(greetings[0] , dict) , "param greetings must be a list of dicts"
+		greetings = (
+			[{"locale":"default" ,"text":"Welcome , {{user_full_name}} !"}] if greetings is None
+			else greetings)
+
+		assert isinstance(greetings, list) and isinstance(greetings[0] , dict) , "param greetings must be a list of dicts"
 		assert greetings[0]["locale"] == "default" , "first element of param greetings must be the default locale used"
 
 		request_body = {
@@ -41,14 +45,36 @@ class ProfileApi():
 
 		return requests.post(self.get_api_url() , params={"access_token":self.get_access_token()} , json=request_body).json()
 
-	def set_persistent_menu(self , persistent_menu):
+	def set_user_persistent_menu(self, user_id, persistent_menu):
+		"""Set the persistent menu for any user of the page.
+
+		Args:
+			user_id (str) : The user id.
+			persistent_menu (PersistentMenu object) : The content of the PersistentMenu object , obtained via the PersistentMenu().get_content() method.
+		"""
+		user_level_endpoint = "/custom_user_settings"
+
+		return requests.post(
+			self.get_api_url() + user_level_endpoint,
+			params={"access_token":self.get_access_token()},
+			json={
+				"psid": user_id,
+				"persistent_menu": persistent_menu
+			}
+		).json()
+
+	def set_persistent_menu(self, persistent_menu):
 		"""Set the persistent menu for the page.
 
 		Args:
 			persistent_menu (PersistentMenu object) : The content of the PersistentMenu object , obtained via the PersistentMenu().get_content() method.
 		"""
+		global_level_endpoint = "/messenger_profile"
+
 		return requests.post(
-			self.get_api_url() ,
-			params={"access_token":self.get_access_token()} ,
-			json=persistent_menu
+			self.get_api_url() + global_level_endpoint,
+			params={"access_token": self.get_access_token()},
+			json={
+				"persistent_menu": persistent_menu
+			}
 		).json()
