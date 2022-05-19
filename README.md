@@ -53,8 +53,6 @@ send_api.send_text_message(<message>, <recipient_id>)
 
 > These ids are page-scoped. These ids differ from those returned from Facebook Login apps which are app-scoped. You must use ids retrieved from a Messenger integration for this page in order to function properly.
 
-> If `app_secret` is initialized, an app_secret_proof will be generated and send with every request. Appsecret Proofs helps further secure your client access tokens. You can find out more on the [Facebook Docs](https://developers.facebook.com/docs/graph-api/securing-requests#appsecret_proof)
-
 ##### Sending a generic template message:
 
 > [Generic Template Messages](https://developers.facebook.com/docs/messenger-platform/implementation#receive_message) allows you to add cool elements like images, text all in a single bubble.
