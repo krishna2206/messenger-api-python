@@ -1,10 +1,13 @@
-"""Wrapper for the Profile API , version 13.0"""
+"""Wrapper for the Profile API , version 15.0"""
 
 import requests
 
+from .constants import API_VERSION
+
+
 class ProfileApi:
 	def __init__(self , page_access_token):
-		self.__graph_version = "13.0"
+		self.__graph_version = API_VERSION
 		self.__api_url = f"https://graph.facebook.com/v{self.__graph_version}/me"
 		self.__page_access_token = page_access_token
 		self.__global_level_endpoint = "/messenger_profile"
@@ -21,7 +24,7 @@ class ProfileApi:
 
 	def set_welcome_screen(self , get_started_button_payload , greetings=None):
 		"""
-		Set the welcome screen of the page. #! <INSERT_DOC_URL>
+		Set the welcome screen of the page. (https://developers.facebook.com/docs/messenger-platform/discovery/welcome-screen/)
 		A welcome screen is the first screen a person sees when he clicks on the "Send message" button in the page.
 
 		Args:
