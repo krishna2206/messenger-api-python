@@ -11,9 +11,9 @@ from .constants import API_VERSION, MessagingType, NotificationType
 
 
 class SendApi:
-    def __init__(self, page_id, page_access_token):
+    def __init__(self, page_access_token):
         self.__graph_version = API_VERSION
-        self.__api_url = f"https://graph.facebook.com/v{self.__graph_version}/{page_id}/messages"
+        self.__api_url = f"https://graph.facebook.com/v{self.__graph_version}/me/messages"
         self.__page_access_token = page_access_token
 
     def get_api_url(self):
