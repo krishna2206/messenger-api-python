@@ -64,19 +64,19 @@ class SendApi:
 	Max size supported is 25.0MiB , if you send an attachment that exceeds this size , this will return an error response.
 	"""
     def send_image_attachment(self, attachment_url, recipient_id, is_reusable="false"):
-        """Send an local image : send_image_attachment("<IMAGE_URL>" , "<RECIPIENT_ID")"""
+        """Send an image by url : send_image_attachment("<IMAGE_URL>" , "<RECIPIENT_ID")"""
         return self.__send_attachment_message("image", attachment_url, recipient_id, is_reusable)
 
     def send_video_attachment(self, attachment_url, recipient_id, is_reusable="false"):
-        """Send an local video : send_video_attachment("<VIDEO_URL>" , "<RECIPIENT_ID")"""
+        """Send a video by url : send_video_attachment("<VIDEO_URL>" , "<RECIPIENT_ID")"""
         return self.__send_attachment_message("video", attachment_url, recipient_id, is_reusable)
 
     def send_audio_attachment(self, attachment_url, recipient_id, is_reusable="false"):
-        """Send an local audio : send_audio_attachment("<AUDIO_URL>" , "<RECIPIENT_ID")"""
+        """Send an audio by url : send_audio_attachment("<AUDIO_URL>" , "<RECIPIENT_ID")"""
         return self.__send_attachment_message("audio", attachment_url, recipient_id, is_reusable)
 
     def send_file_attachment(self, attachment_url, recipient_id, is_reusable="false"):
-        """Send an local file : send_file_attachment("<FILE_URL>" , "<RECIPIENT_ID")"""
+        """Send a file by url : send_file_attachment("<FILE_URL>" , "<RECIPIENT_ID")"""
         return self.__send_attachment_message("file", attachment_url, recipient_id, is_reusable)
 
     def send_generic_message(self, elements, recipient_id, image_aspect_ratio="horizontal", quick_replies=None, **kwargs):
