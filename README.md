@@ -6,17 +6,17 @@ Python Wrapper to various APIs from [Facebook Messenger Platform](https://develo
 
 ## Features
 
-### Send API (v15.0)
+### Send API (v16.0)
  - Send text messages
  - Send attachments from a remote file (image, audio, video, file)
  - Send attachments from a local file (image, audio, video, file)
  - Send templates (generic messages)
  - Send quick replies
  - Send buttons
-### Profile API (v15.0)
+### Profile API (v16.0)
 - Set welcome screen
 - Set persistent menu
-### Attachment Upload API (v15.0)
+### Attachment Upload API (v16.0)
 - Upload attachments from a remote file (image, audio, video, file)
 - Upload attachments from a local file (image, audio video, file)
 ### Reusable components
