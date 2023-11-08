@@ -211,13 +211,15 @@ class QuickReplies:
 
 
 class QuickReply:
-    def __init__(self, title="Quick reply", payload="<DEVELOPER_DEFINED_PAYLOAD>", image_url=None):
+    def __init__(self, title="Quick reply", payload="<DEVELOPER_DEFINED_PAYLOAD>", image_url=None,content_type="text"):
         """Represent a quick reply , used for a quick reply message.
 
         Args:
             title (str, optional): The title of the quick reply. Defaults to "Quick reply".
             payload (str, optional): The payload of this quick reply. Defaults to "<DEVELOPER_DEFINED_PAYLOAD>".
             image_url ([type], optional): The image url to show beside the quick reply. Defaults to None.
+            content_type (str,optional): The action to be taken by the quick reply, see "https://developers.facebook.com/docs/messenger-platform/reference/buttons/quick-replies". Defaults to "text"
+
 
         Notes:
             param title must be non-empty.
@@ -237,6 +239,7 @@ class QuickReply:
         self.__title = title
         self.__payload = payload
         self.__image_url = image_url
+        self.__content_type = content_type
 
         if len(title) > 20:
             print(
@@ -274,12 +277,12 @@ class QuickReply:
         """
         if self.__image_url == None:
             return {
-                "content_type": "text",
+                "content_type": self.__content_type,
                 "title": self.__title,
                 "payload": self.__payload
             }
         return {
-            "content_type": "text",
+            "content_type": self.__content_type,
             "title": self.__title,
             "payload": self.__payload,
             "image_url": self.__image_url
