@@ -10,6 +10,7 @@ class ButtonType:
     """
     POSTBACK = "postback"
     WEB_URL = "web_url"
+    PHONE_NUMPER = "phone_number"
 
 
 class MessagingType:
