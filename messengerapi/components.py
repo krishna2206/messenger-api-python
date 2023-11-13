@@ -49,8 +49,8 @@ class Element:
         self.__image_url = image_url
         self.__buttons = [] if buttons is None else buttons
 
-        if self.__image_url == None or len(self.__buttons) == 0:
-            print("WARNING : param image_url and buttons must be non-empty.")
+        if self.__image_url == None:
+            print("WARNING : param image_url must be non-empty.")
 
     def set_title(self, title):
         assert isinstance(
