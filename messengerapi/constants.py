@@ -28,7 +28,18 @@ class MessagingType:
     UPDATE = "UPDATE"
     MESSAGE_TAG = "MESSAGE_TAG"
 
-
+class QuickReplyType:
+    """Quick Reply Types used in QuickReply classes.
+     
+    text: Sends a text button
+    user_phone_number: Sends a button allowing recipient to send the phone number associated with their account.
+    user_email: Sends a button allowing recipient to send the email associated with their account.
+    """
+    
+    TEXT = "text"
+    USER_PHONE_NUMBER = "user_phone_number"
+    USER_EMAIL = "user_email"
+    
 class NotificationType:
     """Notification types for the Send API.
     Type of push notification a person will receive
