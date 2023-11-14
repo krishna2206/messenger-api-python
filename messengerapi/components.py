@@ -1,6 +1,8 @@
 """A module containing various elements used when sending message in Messenger API."""
 
-from messengerapi import ButtonType,WebViewRatio
+from messengerapi import (ButtonType,
+                            WebViewRatio,
+                            QuickReplyType)
 
 
 class Elements:
@@ -254,14 +256,14 @@ class QuickReplies:
 
 
 class QuickReply:
-    def __init__(self, title="Quick reply", payload="<DEVELOPER_DEFINED_PAYLOAD>", image_url=None,content_type='text'):
+    def __init__(self, title=None, payload="<DEVELOPER_DEFINED_PAYLOAD>", image_url=None,content_type=QuickReplyType.TEXT):
         """Represent a quick reply , used for a quick reply message.
 
         Args:
             title (str, optional): The title of the quick reply. Defaults to "Quick reply".
             payload (str, optional): The payload of this quick reply. Defaults to "<DEVELOPER_DEFINED_PAYLOAD>".
             image_url ([type], optional): The image url to show beside the quick reply. Defaults to None.
-            content_type (str,optional):  The action to be taken by the quick reply, see "https://developers.facebook.com/docs/messenger-platform/reference/buttons/quick-replies". Defaults to 'text"
+            content_type (str,optional):  The action to be taken by the quick reply, see "https://developers.facebook.com/docs/messenger-platform/reference/buttons/quick-replies". Defaults to QuickReplyType.TEXT"
 
         Notes:
             param title must be non-empty.
@@ -270,9 +272,11 @@ class QuickReply:
             Recommended resolution for the image in param image_url is 24x24.
             Use the get_content() method to get the content of the QuickReply object before using it.
         """
-        assert isinstance(
-            title, str), f"type of param title must be str , not {type(title)}"
-        assert title != "", "param title must be non empty"
+        if content_type is QuickReplyType.TEXT: 
+            assert title != "", "param title must be non empty"
+            assert isinstance(
+                title, str), f"type of param title must be str , not {type(title)}"
+            
         assert isinstance(
             payload, str), f"type of param payload must be str , not {type(payload)}"
         assert payload != "", "param payload must be non empty"
@@ -282,10 +286,12 @@ class QuickReply:
         self.__payload = payload
         self.__image_url = image_url
         self.__content_type = content_type
-
-        if len(title) > 20:
-            print(
-                "WARNING : max characters for param title is 20 , your title won't show entirely")
+        
+        
+        if title:
+            if len(title) > 20:
+                print(
+                    "WARNING : max characters for param title is 20 , your title won't show entirely")
 
     def set_title(self, title):
         assert isinstance(
@@ -317,12 +323,6 @@ class QuickReply:
         Returns:
             dict: The content of the QuickReply object.
         """
-        if self.__image_url == None:
-            return {
-                "content_type":self. __content_type,
-                "title": self.__title,
-                "payload": self.__payload
-            }
         return {
             "content_type": self.__content_type,
             "title": self.__title,
