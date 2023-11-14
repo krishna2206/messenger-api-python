@@ -27,30 +27,28 @@ class Elements:
 
 
 class Element:
-    def __init__(self, title="An element of a generic message.", subtitle=None, image_url=None, buttons=None):
+    def __init__(self, title=None, subtitle=None, image_url=None, buttons=None):
         """Represent one element (block , card) of a generic message
 
         Args:
             title (str, optional): The title of the element , use set_title() method to change its default value. Defaults to "An element of a generic message.".
             subtitle (str, optional): The subtitle of the element , use set_subtitle() method to change its default value. Defaults to None.
             image_url (str, optional): The url of the image to show in the element , use set_image_url() method to change its default value. Defaults to None.
-            buttons (list, optional): List of the buttons in the element , max supported is 3(?). Defaults to an empty list.
+            buttons (list, optional): List of the buttons in the element , max supported is 3(?). Defaults to None.
 
         Notes:
-            param image_url and buttons must be non-empty.
+            param image_url  must be non-empty.
+            use set_default_action_url,set_default_action_postback,set_default_action_phone_number methods to set default_action see: https://developers.facebook.com/docs/messenger-platform/reference/templates/generic#elements
             Use the get_content() method to get the content of the Element object before using it in an generic message or an Elements object.
         """
-        assert isinstance(
-            title, str), f"type of param title must be str , not {type(title)}"
-        assert title != "", "param title must be non empty"
 
         self.__title = title
         self.__subtitle = subtitle
         self.__image_url = image_url
-        self.__buttons = [] if buttons is None else buttons
+        self.__buttons = buttons
+        self.__default_action = None
 
-        if self.__image_url == None or len(self.__buttons) == 0:
-            print("WARNING : param image_url and buttons must be non-empty.")
+        assert self.__image_url is not None, "param image_url must be non-empty."
 
     def set_title(self, title):
         assert isinstance(
@@ -69,7 +67,28 @@ class Element:
             image_url, str), f"type of param image_url must be str , not {type(image_url)}"
 
         self.__image_url = image_url
+        
+    def set_default_action_url(self,url,webview=WebViewRatio.FULL):
 
+        self.__default_action = {
+                "type": ButtonType.WEB_URL,
+                "url": url,
+                "webview_height_ratio": webview}
+
+
+    def set_default_action_postback(self,payload):
+        
+        self.__default_action = {
+                "type": ButtonType.POSTBACK,
+                "payload": payload,}
+
+    def set_default_action_phone_number(self,number):
+        
+        self.__default_action = {
+                "type": ButtonType.PHONE_NUMPER,
+                "payload": number,}
+        
+        
     def add_button(self, button):
         assert isinstance(
             button, dict), f"type of param button must be list , not {type(button)}"
@@ -82,10 +101,12 @@ class Element:
         Returns:
             dict: The content of the Element object.
         """
-        if self.__subtitle == None:
+        if self.__default_action:
             return {
                 "title": self.__title,
+                "subtitle": self.__subtitle,
                 "image_url": self.__image_url,
+                "self.__default_action":self.__default_action,
                 "buttons": self.__buttons
             }
         return {
@@ -94,7 +115,6 @@ class Element:
             "image_url": self.__image_url,
             "buttons": self.__buttons
         }
-
 
 class Buttons:
     """A list of Button objects.
