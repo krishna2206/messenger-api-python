@@ -106,7 +106,7 @@ class Element:
                 "title": self.__title,
                 "subtitle": self.__subtitle,
                 "image_url": self.__image_url,
-                "self.__default_action":self.__default_action,
+                "default_action":self.__default_action,
                 "buttons": self.__buttons
             }
         return {
