@@ -69,25 +69,15 @@ class Element:
         self.__image_url = image_url
         
     def set_default_action_url(self,url,webview=WebViewRatio.FULL):
-
+        assert isinstance(
+            url, str),f"type of param image_url must be str , not {type(url)}" 
+        assert webview in (
+            WebViewRatio.FULL,WebViewRatio.COMPACT,WebViewRatio.TALL), "param webview must be FULL or COMPACT or TALL" 
+        
         self.__default_action = {
                 "type": ButtonType.WEB_URL,
                 "url": url,
-                "webview_height_ratio": webview}
-
-
-    def set_default_action_postback(self,payload):
-        
-        self.__default_action = {
-                "type": ButtonType.POSTBACK,
-                "payload": payload,}
-
-    def set_default_action_phone_number(self,number):
-        
-        self.__default_action = {
-                "type": ButtonType.PHONE_NUMPER,
-                "payload": number,}
-        
+                "webview_height_ratio": webview}      
         
     def add_button(self, button):
         assert isinstance(
@@ -101,18 +91,17 @@ class Element:
         Returns:
             dict: The content of the Element object.
         """
-        if self.__default_action:
-            return {
-                "title": self.__title,
-                "subtitle": self.__subtitle,
-                "image_url": self.__image_url,
-                "default_action":self.__default_action,
-                "buttons": self.__buttons
-            }
+    def get_content(self):
+        """Return the content of the Element object.
+
+        Returns:
+            dict: The content of the Element object.
+        """
         return {
             "title": self.__title,
             "subtitle": self.__subtitle,
             "image_url": self.__image_url,
+            "default_action":self.__default_action,
             "buttons": self.__buttons
         }
 
