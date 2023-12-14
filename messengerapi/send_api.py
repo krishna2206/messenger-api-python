@@ -319,15 +319,18 @@ class SendApi:
             json=request_body).json()
 
     def __send_local_attachment(self, asset_type: str, file_location: str,
-        recipient_id: str, is_reusable: str = "true"
+        recipient_id: str, is_reusable: str = "true", mimetype: str = None
     ):
-        extensions = (".mp3", ".pdf")
-        for extension in extensions:
-            if file_location.endswith(extension):
-                mimetype = "application/octet-stream"
-                break
-            elif extension == extensions[-1]:
-                mimetype = magic.Magic(mime=True).from_file(file_location)
+        if mimetype is None:
+            extensions = (".mp3", ".pdf")
+            for extension in extensions:
+                if file_location.endswith(extension):
+                    mimetype = "application/octet-stream"
+                    break
+                elif extension == extensions[-1]:
+                    mimetype = magic.Magic(mime=True).from_file(file_location)
+        else:
+            mimetype = mimetype
 
         print(mimetype)
 
