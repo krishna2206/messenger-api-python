@@ -199,9 +199,9 @@ class SendApi:
         """Send a local audio : send_local_audio(<AUDIO_LOCATION> , <RECIPIENT_ID>)"""
         return self.__send_local_attachment("audio", audio_location, recipient_id, is_reusable)
 
-    def send_local_file(self, file_location: str, recipient_id: str, is_reusable: str = "true"):
+    def send_local_file(self, file_location: str, recipient_id: str, is_reusable: str = "true", mimetype: str = None):
         """Send a local file : send_local_file(<FILE_LOCATION> , <RECIPIENT_ID>)"""
-        return self.__send_local_attachment("file", file_location, recipient_id, is_reusable)
+        return self.__send_local_attachment("file", file_location, recipient_id, is_reusable, mimetype)
 
     def send_saved_image(self, attachment_id: str, recipient_id: str):
         """Send a saved image to the recipient.
