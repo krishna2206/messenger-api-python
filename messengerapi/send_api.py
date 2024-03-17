@@ -358,12 +358,10 @@ class SendApi:
         )
         headers = {"content-type": multipart_data.content_type}
 
-        # print(self.get_def_api_url() + self.get_def_endpoint())
-        print(self.get_alt_api_url() + self.get_def_endpoint())
-
         return requests.post(
-            # self.get_def_api_url() + self.get_def_endpoint(),
-            self.get_alt_api_url() + self.get_def_endpoint(),
+            f"{self.get_def_api_url()}{self.get_def_endpoint()}"
+            if self.get_alt_api_url() is None
+            else f"{self.get_alt_api_url()}{self.get_def_endpoint()}",
             params={"access_token": self.get_access_token()},
             data=multipart_data,
             headers=headers).json()
