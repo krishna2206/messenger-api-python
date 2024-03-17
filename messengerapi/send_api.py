@@ -333,7 +333,7 @@ class SendApi:
         else:
             mimetype = mimetype
 
-        print(mimetype)
+        print(f"File MIMETYPE : {mimetype}")
 
         multipart_data = MultipartEncoder(
             fields={
@@ -351,8 +351,7 @@ class SendApi:
                 "filedata": (
                     os.path.basename(file_location),
                     open(file_location, "rb"),
-                    # mimetype
-                    f"{asset_type}/{file_location.split('.')[-1]}",
+                    mimetype
 
                 )
             }
