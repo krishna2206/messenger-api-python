@@ -6,17 +6,17 @@ Python Wrapper to various APIs from [Facebook Messenger Platform](https://develo
 
 ## Features
 
-### Send API (v16.0)
+### Send API (v19.0)
  - Send text messages
  - Send attachments from a remote file (image, audio, video, file)
  - Send attachments from a local file (image, audio, video, file)
  - Send templates (generic messages)
  - Send quick replies
  - Send buttons
-### Profile API (v16.0)
+### Profile API (v19.0)
 - Set welcome screen
 - Set persistent menu
-### Attachment Upload API (v16.0)
+### Attachment Upload API (v19.0)
 - Upload attachments from a remote file (image, audio, video, file)
 - Upload attachments from a local file (image, audio video, file)
 ### Reusable components
@@ -28,6 +28,8 @@ Various components used when sending messages in Facebook Messenger are wrapped 
 - **QuickReplies:** used to contains various QuickReply objects
 - **QuickReply:** used when sending messages accompanied with quick replies
 - **PersistentMenu:** used when setting up persistent menu
+
+**NOTE :** Please be aware that while this package includes commonly used features of the Messenger Platform, not all features have been implemented. If you would like to contribute and add a feature to this package, you are welcome to submit a pull request. I will review it promptly.
 
 ## Prerequisite
 - **Python 3.7+** installed
@@ -76,7 +78,7 @@ send_api.send_generic_message(elements.get_content() , recipient_id , image_aspe
 ```python
 from messengerapi import SendApi
 
-send_api = SendApi(<page_access_token>)
+send_api = SendApi(<page_access_token>, <page_id>)
 
 # To send an image
 send_api.send_image_attachment(<image_url> , <recipient_id>)
@@ -91,7 +93,7 @@ send_api.send_file_attachment(<file_url> , <recipient_id>)
 ```python
 from messengerapi import SendApi
 
-send_api = SendApi(<page_access_token>)
+send_api = SendApi(<page_access_token>, <page_id>)
 
 # To send an image
 send_api.send_local_image(<image_location> , <recipient_id>)
@@ -102,5 +104,3 @@ send_api.send_local_video(<video_location> , <recipient_id>)
 # To send a file
 send_api.send_local_file(<file_location> , <recipient_id>)
 ```
-## To do
-- Securing requests

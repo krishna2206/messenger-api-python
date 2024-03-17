@@ -1,6 +1,7 @@
-"""Wrapper for the Send API , version 16.0"""
+"""Wrapper for the Send API"""
 
 import os
+import json
 import urllib
 
 import magic
@@ -334,10 +335,10 @@ class SendApi:
 
         print(mimetype)
 
-        request_body = MultipartEncoder(
+        multipart_data = MultipartEncoder(
             fields={
-                "recipient": str({"id": recipient_id}),
-                "message": str(
+                "recipient": json.dumps({"id": recipient_id}),
+                "message": json.dumps(
                     {
                         "attachment": {
                             "type": asset_type,
@@ -350,16 +351,22 @@ class SendApi:
                 "filedata": (
                     os.path.basename(file_location),
                     open(file_location, "rb"),
-                    mimetype
+                    # mimetype
+                    f"{asset_type}/{file_location.split('.')[-1]}",
+
                 )
             }
         )
-        headers = {"content-type": request_body.content_type}
+        headers = {"content-type": multipart_data.content_type}
+
+        # print(self.get_def_api_url() + self.get_def_endpoint())
+        print(self.get_alt_api_url() + self.get_def_endpoint())
 
         return requests.post(
-            self.get_def_api_url() + self.get_def_endpoint(),
+            # self.get_def_api_url() + self.get_def_endpoint(),
+            self.get_alt_api_url() + self.get_def_endpoint(),
             params={"access_token": self.get_access_token()},
-            data=request_body,
+            data=multipart_data,
             headers=headers).json()
 
     def __send_attachment_message(self, attachment_type: str, attachment_url: str,

@@ -1,4 +1,4 @@
-"""Wrapper for the Profile API , version 16.0"""
+"""Wrapper for the Profile API"""
 
 import requests
 
@@ -30,8 +30,8 @@ class ProfileApi:
         Args:
 			get_started_payload (str) : The payload to be sent by the API when the user clicks on "Get started" button.
 			greetings (list , optional) : The welcome message.
-					Supports multiples locales by specifying the local and the corresponding message.
-					Defaults to [{"locale":"default","text":"Welcome , {{user_full_name}} !"}]
+                Supports multiples locales by specifying the local and the corresponding message.
+                Defaults to [{"locale":"default","text":"Welcome , {{user_full_name}} !"}]
         """
         greetings = (
             [{"locale": "default", "text": "Welcome , {{user_full_name}} !"}] if greetings is None
