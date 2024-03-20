@@ -1,6 +1,8 @@
 """A module containing various elements used when sending message in Messenger API."""
 
-from messengerapi import ButtonType
+from messengerapi import (ButtonType,
+                            WebViewRatio,
+                            QuickReplyType)
 
 
 class Elements:
@@ -27,30 +29,28 @@ class Elements:
 
 
 class Element:
-    def __init__(self, title="An element of a generic message.", subtitle=None, image_url=None, buttons=None):
+    def __init__(self, title=None, subtitle=None, image_url=None, buttons=None):
         """Represent one element (block , card) of a generic message
 
         Args:
             title (str, optional): The title of the element , use set_title() method to change its default value. Defaults to "An element of a generic message.".
             subtitle (str, optional): The subtitle of the element , use set_subtitle() method to change its default value. Defaults to None.
             image_url (str, optional): The url of the image to show in the element , use set_image_url() method to change its default value. Defaults to None.
-            buttons (list, optional): List of the buttons in the element , max supported is 3(?). Defaults to an empty list.
+            buttons (list, optional): List of the buttons in the element , max supported is 3(?). Defaults to None.
 
         Notes:
-            param image_url and buttons must be non-empty.
+            param image_url  must be non-empty.
+            use set_default_action_url,set_default_action_postback,set_default_action_phone_number methods to set default_action see: https://developers.facebook.com/docs/messenger-platform/reference/templates/generic#elements
             Use the get_content() method to get the content of the Element object before using it in an generic message or an Elements object.
         """
-        assert isinstance(
-            title, str), f"type of param title must be str , not {type(title)}"
-        assert title != "", "param title must be non empty"
 
         self.__title = title
         self.__subtitle = subtitle
         self.__image_url = image_url
-        self.__buttons = [] if buttons is None else buttons
+        self.__buttons = buttons
+        self.__default_action = None
 
-        if self.__image_url == None or len(self.__buttons) == 0:
-            print("WARNING : param image_url and buttons must be non-empty.")
+        assert self.__image_url is not None, "param image_url must be non-empty."
 
     def set_title(self, title):
         assert isinstance(
@@ -69,7 +69,19 @@ class Element:
             image_url, str), f"type of param image_url must be str , not {type(image_url)}"
 
         self.__image_url = image_url
-
+        
+    def set_default_action_url(self,url,webview=WebViewRatio.FULL):
+        assert isinstance(
+            url, str),f"type of param image_url must be str , not {type(url)}" 
+        assert webview in (
+            WebViewRatio.FULL,WebViewRatio.COMPACT,WebViewRatio.TALL), "param webview must be FULL or COMPACT or TALL" 
+        
+        self.__default_action = {
+                "type": ButtonType.WEB_URL,
+                "url": url,
+                "webview_height_ratio": webview}
+        
+        
     def add_button(self, button):
         assert isinstance(
             button, dict), f"type of param button must be list , not {type(button)}"
@@ -82,18 +94,14 @@ class Element:
         Returns:
             dict: The content of the Element object.
         """
-        if self.__subtitle == None:
-            return {
-                "title": self.__title,
-                "image_url": self.__image_url,
-                "buttons": self.__buttons
-            }
         return {
             "title": self.__title,
             "subtitle": self.__subtitle,
             "image_url": self.__image_url,
+            "default_action":self.__default_action,
             "buttons": self.__buttons
         }
+
 
 
 class Buttons:
@@ -120,7 +128,7 @@ class Buttons:
 
 
 class Button:
-    def __init__(self, button_type=ButtonType.POSTBACK, title="Button"):
+    def __init__(self, button_type=ButtonType.POSTBACK, title="Button"): 
         """Represent a button , used for generic message , persistent menu , ...
 
         Args:
@@ -131,21 +139,25 @@ class Button:
             param title must be non-empty.
             If the button is a postback button , use set_payload() method to change the default value.
             If the button is a web_url button , use set_url() method to change the default value.
+            If the button is a phone_number , use set_phone_number() method to change the default value.
             Use the get_content() method to get the content of the Button object before using it.
         """
         assert button_type in (
-            ButtonType.POSTBACK, ButtonType.WEB_URL), "param type must be POSTBACK or WEB_URL"
+            ButtonType.POSTBACK, ButtonType.WEB_URL,ButtonType.PHONE_NUMPER), "param type must be POSTBACK or WEB_URL or PHONE_NUMPER"
         assert isinstance(
             title, str), f"type of param title must be str , not {type(title)}"
         assert title != "", "param title must be non empty"
 
         self.__type = button_type
         self.__title = title
+        self.__messenger_extensions = None
 
         if self.__type == ButtonType.POSTBACK:
             self.__payload = "<DEVELOPER_DEFINED_PAYLOAD>"
         elif self.__type == ButtonType.WEB_URL:
             self.__url = "<DEVELOPER_DEFINED_URL>"
+        elif self.__type == ButtonType.PHONE_NUMPER:
+            self.__number = "<DEVELOPER_DEFINED_NUMBER>"
 
     def set_title(self, title):
         assert isinstance(
@@ -167,6 +179,24 @@ class Button:
             url, str), f"type of param url must be str , not {type(url)}"
 
         self.__url = url
+        
+    def set_phone_number(self,number):
+        assert self.__type == ButtonType.PHONE_NUMPER, "param number is only supported on phone_number buttons"
+        assert isinstance(
+            number, str), f"type of param payload must be str , not {type(number)}"
+        assert number.startswith('+'), "the phone number must be starting with (+) and (country_code). ex: +1453452664"
+
+        self.__number = number
+            
+    def set_webview(self,webview=WebViewRatio.FULL):
+        assert self.__type == ButtonType.WEB_URL, "param webview is only supported on web_url buttons"
+        assert isinstance(
+            webview, str), f"type of param webview must be str , not {type(webview)}"
+        
+        self.__messenger_extensions = "true"
+        self.__webview = webview
+
+
 
     def get_content(self):
         """Return the content of the Button object.
@@ -180,12 +210,27 @@ class Button:
                 "title": self.__title,
                 "payload": self.__payload
             }
-        return {
-            "type": self.__type,
-            "title": self.__title,
-            "url": self.__url
-        }
-
+        elif self.__messenger_extensions:
+            return {
+                "type": self.__type,
+                "title": self.__title,
+                "url": self.__url,
+                "webview_height_ratio":self.__webview,
+                "messenger_extensions":self.__messenger_extensions
+         
+            }              
+        elif self.__type == ButtonType.WEB_URL:
+            return {
+                "type": self.__type,
+                "title": self.__title,
+                "url": self.__url,                       
+            }    
+        elif self.__type == ButtonType.PHONE_NUMPER:
+            return {
+                "type":self.__type,
+                "title":self.__title,
+                "payload":self.__number
+            }
 
 class QuickReplies:
     """A list of QuickReply objects.
@@ -211,13 +256,14 @@ class QuickReplies:
 
 
 class QuickReply:
-    def __init__(self, title="Quick reply", payload="<DEVELOPER_DEFINED_PAYLOAD>", image_url=None):
+    def __init__(self, title=None, payload="<DEVELOPER_DEFINED_PAYLOAD>", image_url=None,content_type=QuickReplyType.TEXT):
         """Represent a quick reply , used for a quick reply message.
 
         Args:
             title (str, optional): The title of the quick reply. Defaults to "Quick reply".
             payload (str, optional): The payload of this quick reply. Defaults to "<DEVELOPER_DEFINED_PAYLOAD>".
             image_url ([type], optional): The image url to show beside the quick reply. Defaults to None.
+            content_type (str,optional):  The action to be taken by the quick reply, see "https://developers.facebook.com/docs/messenger-platform/reference/buttons/quick-replies". Defaults to QuickReplyType.TEXT"
 
         Notes:
             param title must be non-empty.
@@ -226,9 +272,11 @@ class QuickReply:
             Recommended resolution for the image in param image_url is 24x24.
             Use the get_content() method to get the content of the QuickReply object before using it.
         """
-        assert isinstance(
-            title, str), f"type of param title must be str , not {type(title)}"
-        assert title != "", "param title must be non empty"
+        if content_type is QuickReplyType.TEXT: 
+            assert title != "", "param title must be non empty"
+            assert isinstance(
+                title, str), f"type of param title must be str , not {type(title)}"
+            
         assert isinstance(
             payload, str), f"type of param payload must be str , not {type(payload)}"
         assert payload != "", "param payload must be non empty"
@@ -237,10 +285,13 @@ class QuickReply:
         self.__title = title
         self.__payload = payload
         self.__image_url = image_url
-
-        if len(title) > 20:
-            print(
-                "WARNING : max characters for param title is 20 , your title won't show entirely")
+        self.__content_type = content_type
+        
+        
+        if title:
+            if len(title) > 20:
+                print(
+                    "WARNING : max characters for param title is 20 , your title won't show entirely")
 
     def set_title(self, title):
         assert isinstance(
@@ -272,14 +323,8 @@ class QuickReply:
         Returns:
             dict: The content of the QuickReply object.
         """
-        if self.__image_url == None:
-            return {
-                "content_type": "text",
-                "title": self.__title,
-                "payload": self.__payload
-            }
         return {
-            "content_type": "text",
+            "content_type": self.__content_type,
             "title": self.__title,
             "payload": self.__payload,
             "image_url": self.__image_url

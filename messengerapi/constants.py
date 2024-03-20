@@ -5,11 +5,14 @@ class ButtonType:
     """Button types used in Element and QuickReply classes.
 
     POSTBACK: Button that sends a payload back to the bot.
-
+    
     WEB_URL: Button that opens a URL in the user's browser.
+    
+    PHONE_NUMBER: Button that opens a call app in the user's phone
     """
     POSTBACK = "postback"
     WEB_URL = "web_url"
+    PHONE_NUMPER = "phone_number"
 
 
 class MessagingType:
@@ -25,7 +28,18 @@ class MessagingType:
     UPDATE = "UPDATE"
     MESSAGE_TAG = "MESSAGE_TAG"
 
-
+class QuickReplyType:
+    """Quick Reply Types used in QuickReply classes.
+     
+    text: Sends a text button
+    user_phone_number: Sends a button allowing recipient to send the phone number associated with their account.
+    user_email: Sends a button allowing recipient to send the email associated with their account.
+    """
+    
+    TEXT = "text"
+    USER_PHONE_NUMBER = "user_phone_number"
+    USER_EMAIL = "user_email"
+    
 class NotificationType:
     """Notification types for the Send API.
     Type of push notification a person will receive
@@ -75,3 +89,18 @@ class MessageTag:
     CUSTOMER_FEEDBACK = "CUSTOMER_FEEDBACK"
     HUMAN_AGENT = "HUMAN_AGENT"
     POST_PURCHASE_UPDATE = "POST_PURCHASE_UPDATE"
+    
+class WebViewRatio:
+    """WebView allows you to open a standard webview, where you can load webpages inside Messenger.
+    This lets you offer experiences and features that might be difficult to offer with message bubbles
+    
+    FULL: Allows you to view the full browser window 
+    
+    TALL: Allows you to display half of the browser window  
+    
+    COMPACT: Allows you to view a quarter of the browser window  
+    """
+    FULL = "full"
+    TALL = "tall"
+    COMPACT = "compact"
+    
