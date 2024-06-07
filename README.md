@@ -54,6 +54,7 @@ send_api.send_text_message(<message>, <recipient_id>)
 **Note**: From Facebook regarding User IDs
 
 > These ids are page-scoped. These ids differ from those returned from Facebook Login apps which are app-scoped. You must use ids retrieved from a Messenger integration for this page in order to function properly.
+
 > The Facebook Graph API allows messages to be sent only to User IDs that have recently interacted with the Facebook Page. Attempting to send messages to User IDs that fall outside of this interaction window will result in a failed delivery.  (More to read on : https://developers.facebook.com/docs/messenger-platform/overview)
 
 ##### Sending a generic template message:
