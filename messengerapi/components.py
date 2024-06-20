@@ -34,7 +34,7 @@ class Element:
             title (str, optional): The title of the element , use set_title() method to change its default value. Defaults to "An element of a generic message.".
             subtitle (str, optional): The subtitle of the element , use set_subtitle() method to change its default value. Defaults to None.
             image_url (str, optional): The url of the image to show in the element , use set_image_url() method to change its default value. Defaults to None.
-            buttons (list, optional): List of the buttons in the element , max supported is 3(?). Defaults to an empty list.
+            buttons (list, optional): List of the buttons in the element , max supported is 3(?). Defaults to None.
 
         Notes:
             param image_url and buttons must be non-empty.
@@ -47,7 +47,7 @@ class Element:
         self.__title = title
         self.__subtitle = subtitle
         self.__image_url = image_url
-        self.__buttons = [] if buttons is None else buttons
+        self.__buttons = buttons
 
         if self.__image_url == None or len(self.__buttons) == 0:
             print("WARNING : param image_url and buttons must be non-empty.")
@@ -82,11 +82,12 @@ class Element:
         Returns:
             dict: The content of the Element object.
         """
-        if self.__subtitle == None:
+        if self.__buttons == None:
             return {
                 "title": self.__title,
+                "subtitle": self.__subtitle,
                 "image_url": self.__image_url,
-                "buttons": self.__buttons
+
             }
         return {
             "title": self.__title,
@@ -94,7 +95,6 @@ class Element:
             "image_url": self.__image_url,
             "buttons": self.__buttons
         }
-
 
 class Buttons:
     """A list of Button objects.
