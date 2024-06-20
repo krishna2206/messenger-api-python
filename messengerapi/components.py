@@ -120,7 +120,7 @@ class Buttons:
 
 
 class Button:
-    def __init__(self, button_type=ButtonType.POSTBACK, title="Button"):
+    def __init__(self, button_type=ButtonType.POSTBACK, title="Button"): 
         """Represent a button , used for generic message , persistent menu , ...
 
         Args:
@@ -131,10 +131,11 @@ class Button:
             param title must be non-empty.
             If the button is a postback button , use set_payload() method to change the default value.
             If the button is a web_url button , use set_url() method to change the default value.
+            If the button is a phone_number , use set_phone_number() method to change the default value.
             Use the get_content() method to get the content of the Button object before using it.
         """
         assert button_type in (
-            ButtonType.POSTBACK, ButtonType.WEB_URL), "param type must be POSTBACK or WEB_URL"
+            ButtonType.POSTBACK, ButtonType.WEB_URL,ButtonType.PHONE_NUMPER), "param type must be POSTBACK or WEB_URL or PHONE_NUMPER"
         assert isinstance(
             title, str), f"type of param title must be str , not {type(title)}"
         assert title != "", "param title must be non empty"
@@ -146,6 +147,8 @@ class Button:
             self.__payload = "<DEVELOPER_DEFINED_PAYLOAD>"
         elif self.__type == ButtonType.WEB_URL:
             self.__url = "<DEVELOPER_DEFINED_URL>"
+        elif self.__type == ButtonType.PHONE_NUMPER:
+            self.__number = "+10000000"
 
     def set_title(self, title):
         assert isinstance(
@@ -167,6 +170,14 @@ class Button:
             url, str), f"type of param url must be str , not {type(url)}"
 
         self.__url = url
+        
+    def set_phone_number(self,number):
+            assert self.__type == ButtonType.PHONE_NUMPER, "param number is only supported on phone_number buttons"
+            assert isinstance(
+                number, str), f"type of param payload must be str , not {type(number)}"
+            assert number.startswith('+'), "the phone number must be starting with (+) and (country_code). ex: +1453452664"
+
+            self.__number = number
 
     def get_content(self):
         """Return the content of the Button object.
@@ -180,12 +191,18 @@ class Button:
                 "title": self.__title,
                 "payload": self.__payload
             }
-        return {
-            "type": self.__type,
-            "title": self.__title,
-            "url": self.__url
-        }
-
+        elif self.__type == ButtonType.WEB_URL:
+            return {
+                "type": self.__type,
+                "title": self.__title,
+                "url": self.__url
+            }
+        elif self.__type == ButtonType.PHONE_NUMPER:
+            return {
+                "type":self.__type,
+                "title":self.__title,
+                "payload":self.__number
+            }
 
 class QuickReplies:
     """A list of QuickReply objects.
