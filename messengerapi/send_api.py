@@ -2,24 +2,36 @@
 
 import os
 import json
-import urllib
+from urllib.parse import urlencode
+from typing import Optional
 
 import magic
-import requests
 from requests_toolbelt import MultipartEncoder
 
+from ._base_api import BaseApiClient
 from .constants import API_VERSION, MessagingType, NotificationType
 
 
-class SendApi:
-    def __init__(self, page_access_token: str, page_id: str = None):
+def _validate_non_empty_string(value: str, field_name: str) -> None:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{field_name} must be a non-empty string")
+
+
+class SendApi(BaseApiClient):
+    def __init__(
+        self,
+        page_access_token: str,
+        page_id: Optional[str] = None,
+        *,
+        timeout: float = 30.0,
+    ) -> None:
+        super().__init__(page_access_token, timeout=timeout)
         self.__graph_version = API_VERSION
         self.__def_api_url = f"https://graph.facebook.com/v{self.__graph_version}/me"
         self.__alt_api_url = (
             None if page_id is None else f"https://graph.facebook.com/v{self.__graph_version}/{page_id}")
         self.__page_id = None if page_id is None else page_id
         self.__default_endpoint = "/messages"
-        self.__page_access_token = page_access_token
 
     def get_def_api_url(self):
         return self.__def_api_url
@@ -34,7 +46,7 @@ class SendApi:
         return self.__default_endpoint
 
     def get_access_token(self):
-        return self.__page_access_token
+        return super().get_access_token()
 
     def get_graph_version(self):
         return self.__graph_version
@@ -52,8 +64,12 @@ class SendApi:
         Returns:
             dict: The response body from Facebook's API's server.
         """
-        assert messaging_type in ("RESPONSE", "UPDATE", "MESSAGE_TAG"), \
-            "value of param messagin_type must be \"RESPONSE\",\"UPDATE\" or \"MESSAGE_TAG\""
+        _validate_non_empty_string(message, "message")
+        _validate_non_empty_string(recipient_id, "recipient_id")
+        if messaging_type not in ("RESPONSE", "UPDATE", "MESSAGE_TAG"):
+            raise ValueError(
+                "messaging_type must be one of RESPONSE, UPDATE, or MESSAGE_TAG"
+            )
 
         request_body = {
             "messaging_type": messaging_type,
@@ -66,16 +82,20 @@ class SendApi:
             }
         }
         if messaging_type == MessagingType.MESSAGE_TAG:
-            assert kwargs.get("tag") in (
-                "ACCOUNT_UPDATE", "CONFIRMED_EVENT_UPDATE", 
-                "CUSTOMER_FEEDBACK", "HUMAN_AGENT", "POST_PURCHASE_UPDATE"), \
-                "value of param messagin_type must be \"ACCOUNT_UPDATE\",\"CONFIRMED_EVENT_UPDATE\",\"CUSTOMER_FEEDBACK\",\"HUMAN_AGENT\" or \"POST_PURCHASE_UPDATE\""
+            if kwargs.get("tag") not in (
+                "ACCOUNT_UPDATE", "CONFIRMED_EVENT_UPDATE",
+                "CUSTOMER_FEEDBACK", "HUMAN_AGENT", "POST_PURCHASE_UPDATE",
+            ):
+                raise ValueError(
+                    "tag must be one of ACCOUNT_UPDATE, CONFIRMED_EVENT_UPDATE, "
+                    "CUSTOMER_FEEDBACK, HUMAN_AGENT, or POST_PURCHASE_UPDATE"
+                )
             request_body["tag"] = kwargs.get("tag")
 
-        return requests.post(
+        return self._post_json(
             self.get_def_api_url() + self.get_def_endpoint(),
-            params={"access_token": self.get_access_token()},
-            json=request_body).json()
+            request_body,
+        )
 
     """
 	Send an attachment from an URL of a file
@@ -130,17 +150,17 @@ class SendApi:
         }
 
         if quick_replies is not None:
-            assert isinstance(
-                quick_replies, list), f"type of param quick_replies must be a list , not {type(quick_replies)}"
-            assert len(
-                quick_replies) > 0, "param quick_replies must be non empty"
+            if not isinstance(quick_replies, list):
+                raise TypeError("quick_replies must be a list")
+            if len(quick_replies) == 0:
+                raise ValueError("quick_replies must be non-empty")
 
             request_body["message"]["quick_replies"] = quick_replies
 
-        return requests.post(
+        return self._post_json(
             self.get_def_api_url() + self.get_def_endpoint(),
-            params={"access_token": self.get_access_token()},
-            json=request_body).json()
+            request_body,
+        )
 
     def mark_seen_message(self, recipient_id: str):
         """Mark 'seen' the message"""
@@ -179,10 +199,10 @@ class SendApi:
             }
         }
 
-        return requests.post(
+        return self._post_json(
             self.get_def_api_url() + self.get_def_endpoint(),
-            params={"access_token": self.get_access_token()},
-            json=request_body).json()
+            request_body,
+        )
 
     """
 	Send an attachment from a local file
@@ -285,7 +305,8 @@ class SendApi:
             json=request_body).json()
 
     def __send_sender_actions(self, sender_action: str, recipient_id: str):
-        assert self.get_alt_api_url() is not None, "The page id is not defined for this instance."
+        if self.get_alt_api_url() is None:
+            raise ValueError("The page id is not defined for this instance.")
 
         request_body = {
             "recipient": {
@@ -294,10 +315,10 @@ class SendApi:
             "sender_action": sender_action
         }
 
-        return requests.post(
+        return self._post_json(
             self.get_alt_api_url() + self.get_def_endpoint(),
-            params={"access_token": self.get_access_token()},
-            json=request_body).json()
+            request_body,
+        )
 
     def __send_saved_attachment(self, attachment_id: str, attachment_type: str, recipient_id: str):
         request_body = {
@@ -314,10 +335,10 @@ class SendApi:
             }
         }
 
-        return requests.post(
+        return self._post_json(
             self.get_def_api_url() + self.get_def_endpoint(),
-            params={"access_token": self.get_access_token()},
-            json=request_body).json()
+            request_body,
+        )
 
     def __send_local_attachment(self, asset_type: str, file_location: str,
         recipient_id: str, is_reusable: str = "true", mimetype: str = None
@@ -333,38 +354,34 @@ class SendApi:
         else:
             mimetype = mimetype
 
-        print(f"File MIMETYPE : {mimetype}")
-
-        multipart_data = MultipartEncoder(
-            fields={
-                "recipient": json.dumps({"id": recipient_id}),
-                "message": json.dumps(
-                    {
-                        "attachment": {
-                            "type": asset_type,
-                            "payload": {
-                                "is_reusable": is_reusable
+        with open(file_location, "rb") as file_data:
+            multipart_data = MultipartEncoder(
+                fields={
+                    "recipient": json.dumps({"id": recipient_id}),
+                    "message": json.dumps(
+                        {
+                            "attachment": {
+                                "type": asset_type,
+                                "payload": {
+                                    "is_reusable": is_reusable
+                                }
                             }
                         }
-                    }
-                ),
-                "filedata": (
-                    os.path.basename(file_location),
-                    open(file_location, "rb"),
-                    mimetype
+                    ),
+                    "filedata": (
+                        os.path.basename(file_location),
+                        file_data,
+                        mimetype
+                    )
+                }
+            )
 
-                )
-            }
-        )
-        headers = {"content-type": multipart_data.content_type}
-
-        return requests.post(
-            f"{self.get_def_api_url()}{self.get_def_endpoint()}"
-            if self.get_alt_api_url() is None
-            else f"{self.get_alt_api_url()}{self.get_def_endpoint()}",
-            params={"access_token": self.get_access_token()},
-            data=multipart_data,
-            headers=headers).json()
+            api_url = (
+                f"{self.get_def_api_url()}{self.get_def_endpoint()}"
+                if self.get_alt_api_url() is None
+                else f"{self.get_alt_api_url()}{self.get_def_endpoint()}"
+            )
+            return self._post_multipart(api_url, multipart_data, multipart_data.content_type)
 
     def __send_attachment_message(self, attachment_type: str, attachment_url: str,
         recipient_id: str, is_reusable: str = "false"
@@ -384,20 +401,21 @@ class SendApi:
             }
         }
 
-        return requests.post(
+        return self._post_json(
             self.get_def_api_url() + self.get_def_endpoint(),
-            params={"access_token": self.get_access_token()},
-            json=request_body).json()
+            request_body,
+        )
 
     def send_batch_image_attachments(self, image_urls: list, recipient_id: str):
-        assert self.get_page_id() is not None, "The page id is not defined for this instance."
+        if self.get_page_id() is None:
+            raise ValueError("The page id is not defined for this instance.")
 
         batch_request_body = []
         for image_url in image_urls:
             request_body = {
                 "method": "POST",
                 "relative_url": f"{self.get_page_id()}" + self.get_def_endpoint(),
-                "body": urllib.parse.urlencode({
+                "body": urlencode({
                     "recipient": {"id": recipient_id},
                     "message": {
                         "attachment": {
@@ -415,7 +433,7 @@ class SendApi:
             "batch": batch_request_body
         }
 
-        return requests.post(
+        return self._post_json(
             f"https://graph.facebook.com/{self.get_graph_version()}",
-            params={"access_token": self.get_access_token()},
-            json=request_body).json()
+            request_body,
+        )
