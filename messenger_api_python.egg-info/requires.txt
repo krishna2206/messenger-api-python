@@ -1,0 +1,3 @@
+python_magic
+requests
+requests_toolbelt
