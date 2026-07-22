@@ -4,23 +4,25 @@ import os
 import json
 
 import magic
-import requests
 from requests_toolbelt import MultipartEncoder
 
+from ._base_api import BaseApiClient
 from .constants import API_VERSION
 
 
-class AttachmentUploadApi:
-    def __init__(self, page_access_token: str, page_id: str) -> None:
+class AttachmentUploadApi(BaseApiClient):
+    def __init__(self, page_access_token: str, page_id: str, *, timeout: float = 30.0) -> None:
+        super().__init__(page_access_token, timeout=timeout)
+        if not isinstance(page_id, str) or not page_id.strip():
+            raise ValueError("page_id must be a non-empty string")
         self.__graph_version = API_VERSION
         self.__api_url = f"https://graph.facebook.com/v{self.__graph_version}/{page_id}/message_attachments"
-        self.__page_access_token = page_access_token
 
     def get_api_url(self):
         return self.__api_url
 
     def get_access_token(self):
-        return self.__page_access_token
+        return super().get_access_token()
 
     def get_graph_version(self):
         return self.__graph_version
@@ -63,32 +65,29 @@ class AttachmentUploadApi:
         else:
             mimetype = magic.Magic(mime=True).from_file(file_location)
 
-        print(f"File MIMETYPE : {mimetype}")
-
-        request_body = MultipartEncoder(
-            fields={
-                "message": json.dumps({
-                    "attachment": {
-                        "type": asset_type,
-                        "payload": {
-                            "is_reusable": "true"
+        with open(file_location, "rb") as file_data:
+            request_body = MultipartEncoder(
+                fields={
+                    "message": json.dumps({
+                        "attachment": {
+                            "type": asset_type,
+                            "payload": {
+                                "is_reusable": "true"
+                            }
                         }
-                    }
-                }),
-                "filedata": (
-                    os.path.basename(file_location),
-                    open(file_location, "rb"),
-                    mimetype
-                )
-            }
-        )
-        headers = {"content-type": request_body.content_type}
-
-        return requests.post(
-            self.get_api_url(),
-            params={"access_token": self.get_access_token()},
-            data=request_body,
-            headers=headers).json()
+                    }),
+                    "filedata": (
+                        os.path.basename(file_location),
+                        file_data,
+                        mimetype
+                    )
+                }
+            )
+            return self._post_multipart(
+                self.get_api_url(),
+                request_body,
+                request_body.content_type,
+            )
 
     def __upload_remote_attachement(self, asset_type: str, file_url: str):
         request_body = {
@@ -103,7 +102,5 @@ class AttachmentUploadApi:
             }
         }
 
-        return requests.post(
-            self.get_api_url(),
-            params={"access_token": self.get_access_token()},
-            json=request_body).json()["attachment_id"]
+        response = self._post_json(self.get_api_url(), request_body)
+        return response["attachment_id"]

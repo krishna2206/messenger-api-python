@@ -32,7 +32,7 @@ Various components used when sending messages in Facebook Messenger are wrapped 
 **NOTE :** Please be aware that while this package includes commonly used features of the Messenger Platform, not all features have been implemented. If you would like to contribute and add a feature to this package, you are welcome to submit a pull request. I will review it promptly.
 
 ## Prerequisite
-- **Python 3.7+** installed
+- **Python 3.9+** installed
 - You'll need to setup a [Facebook App](https://developers.facebook.com/apps/), Facebook Page, get the Page Access Token and link the App to the Page.
 ## How to install
 ### From GitHub

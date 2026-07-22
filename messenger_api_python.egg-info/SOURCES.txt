@@ -8,6 +8,7 @@ messenger_api_python.egg-info/dependency_links.txt
 messenger_api_python.egg-info/requires.txt
 messenger_api_python.egg-info/top_level.txt
 messengerapi/__init__.py
+messengerapi/_base_api.py
 messengerapi/attachment_upload_api.py
 messengerapi/components.py
 messengerapi/constants.py

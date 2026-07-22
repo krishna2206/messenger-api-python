@@ -1,20 +1,24 @@
 Metadata-Version: 2.4
 Name: messenger-api-python
-Version: 2024.3.17
+Version: 2026.7.22
 Summary: Python wrapper to the various APIs in Facebook Messenger Platform
 Home-page: https://github.com/krishna2206/messenger-api-python
 Author: krishna2206
 Author-email: fitiavana.krishna@gmail.com
 License: MIT License
-Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
-Requires-Python: >=3.7
+Requires-Python: >=3.9
 Description-Content-Type: text/markdown
 License-File: LICENSE
-Requires-Dist: python_magic
-Requires-Dist: requests
-Requires-Dist: requests_toolbelt
+Requires-Dist: python-magic<1,>=0.4.27
+Requires-Dist: requests<3,>=2.31.0
+Requires-Dist: requests-toolbelt<2,>=1.0.0
 Dynamic: license-file
 
 # messenger-api-python
@@ -51,7 +55,7 @@ Various components used when sending messages in Facebook Messenger are wrapped 
 **NOTE :** Please be aware that while this package includes commonly used features of the Messenger Platform, not all features have been implemented. If you would like to contribute and add a feature to this package, you are welcome to submit a pull request. I will review it promptly.
 
 ## Prerequisite
-- **Python 3.7+** installed
+- **Python 3.9+** installed
 - You'll need to setup a [Facebook App](https://developers.facebook.com/apps/), Facebook Page, get the Page Access Token and link the App to the Page.
 ## How to install
 ### From GitHub
